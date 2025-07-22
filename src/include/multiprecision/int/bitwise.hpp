@@ -1,5 +1,5 @@
-#ifndef MP_BITWISE_HPP
-#define MP_BITWISE_HPP
+#ifndef MP_INT_BITWISE_HPP
+#define MP_INT_BITWISE_HPP
 
 /**
  * bitwise.hpp
@@ -13,7 +13,7 @@ namespace multiprecision {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator|=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator|=(const int_t<other_bits> &other) {
     for (size_t i = 0; i < kComponentsCount && i < other.kComponentsCount;
          ++i) {
         _components[i] |= other._components[i];
@@ -24,7 +24,7 @@ int_t<bits> &int_t<bits>::operator|=(const int_t<other_bits> &other) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator&=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator&=(const int_t<other_bits> &other) {
     for (size_t i = 0; i < kComponentsCount && i < other.kComponentsCount;
          ++i) {
         _components[i] &= other._components[i];
@@ -35,7 +35,7 @@ int_t<bits> &int_t<bits>::operator&=(const int_t<other_bits> &other) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator^=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator^=(const int_t<other_bits> &other) {
     for (size_t i = 0; i < kComponentsCount && i < other.kComponentsCount;
          ++i) {
         _components[i] ^= other._components[i];
@@ -44,13 +44,15 @@ int_t<bits> &int_t<bits>::operator^=(const int_t<other_bits> &other) {
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator|=(uint64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator|=(uint64_t other) {
     *(uint64_t *)_components |= other;
 
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator&=(uint64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator&=(uint64_t other) {
     *(uint64_t *)_components &= other;
 
     std::fill(_components + sizeof(uint64_t) / sizeof(IntegralType),
@@ -59,13 +61,14 @@ template <size_t bits> int_t<bits> &int_t<bits>::operator&=(uint64_t other) {
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator^=(uint64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator^=(uint64_t other) {
     *(uint64_t *)_components ^= other;
 
     return *this;
 }
 
-template <size_t bits> int_t<bits> int_t<bits>::operator~() const {
+template <size_t bits> constexpr int_t<bits> int_t<bits>::operator~() const {
     int_t<bits> result = *this;
 
     for (size_t i = 0; i < kComponentsCount; ++i) {
@@ -75,7 +78,8 @@ template <size_t bits> int_t<bits> int_t<bits>::operator~() const {
     return result;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator<<=(uint64_t shift) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator<<=(uint64_t shift) {
     if (shift >= bits) {
         return *this = 0;
     }
@@ -104,7 +108,8 @@ template <size_t bits> int_t<bits> &int_t<bits>::operator<<=(uint64_t shift) {
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator>>=(uint64_t shift) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator>>=(uint64_t shift) {
     if (shift >= bits) {
         return *this = 0;
     }
@@ -139,7 +144,8 @@ template <size_t bits> int_t<bits> &int_t<bits>::operator>>=(uint64_t shift) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator<<=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &
+int_t<bits>::operator<<=(const int_t<other_bits> &other) {
     // This is not the best way to reduce to shift with uint64_t, but shifting
     // over 18446744073709551616 is senseless either.
     const uint64_t shift = *reinterpret_cast<uint64_t *>(other._components);
@@ -149,7 +155,8 @@ int_t<bits> &int_t<bits>::operator<<=(const int_t<other_bits> &other) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator>>=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &
+int_t<bits>::operator>>=(const int_t<other_bits> &other) {
     // This is not the best way to reduce to shift with uint64_t, but shifting
     // over 18446744073709551616 is senseless either.
     const uint64_t shift = *reinterpret_cast<uint64_t *>(other._components);
@@ -158,52 +165,57 @@ int_t<bits> &int_t<bits>::operator>>=(const int_t<other_bits> &other) {
 }
 
 template <size_t bits>
-int_t<bits> operator<<(int_t<bits> first, uint64_t second) {
+constexpr int_t<bits> operator<<(int_t<bits> first, uint64_t second) {
     return first <<= second;
 }
 
 template <size_t bits>
-int_t<bits> operator>>(int_t<bits> first, uint64_t second) {
+constexpr int_t<bits> operator>>(int_t<bits> first, uint64_t second) {
     return first >>= second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator<<(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator<<(int_t<bits> first,
+                                 const int_t<other_bits> &second) {
     return first <<= second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator>>(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator>>(int_t<bits> first,
+                                 const int_t<other_bits> &second) {
     return first >>= second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator|(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator|(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first |= second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator&(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator&(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first &= second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator^(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator^(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first ^= second;
 }
 
 template <size_t bits>
-int_t<bits> operator|(int_t<bits> first, uint64_t second) {
+constexpr int_t<bits> operator|(int_t<bits> first, uint64_t second) {
     return first |= second;
 }
 
 template <size_t bits>
-int_t<bits> operator&(int_t<bits> first, uint64_t second) {
+constexpr int_t<bits> operator&(int_t<bits> first, uint64_t second) {
     return first &= second;
 }
 
 template <size_t bits>
-int_t<bits> operator^(int_t<bits> first, uint64_t second) {
+constexpr int_t<bits> operator^(int_t<bits> first, uint64_t second) {
     return first ^= second;
 }
 

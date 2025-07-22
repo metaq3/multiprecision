@@ -1,5 +1,5 @@
-#ifndef MP_ARITHMETIC_HPP
-#define MP_ARITHMETIC_HPP
+#ifndef MP_INT_ARITHMETIC_HPP
+#define MP_INT_ARITHMETIC_HPP
 
 /**
  * arithmetic.hpp
@@ -14,7 +14,7 @@
 
 namespace multiprecision {
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator++() {
+template <size_t bits> constexpr int_t<bits> &int_t<bits>::operator++() {
     IntegralType toAdd = 1;
 
     for (size_t i = 0; i < kComponentsCount; ++i) {
@@ -27,7 +27,7 @@ template <size_t bits> int_t<bits> &int_t<bits>::operator++() {
     return *this;
 }
 
-template <size_t bits> int_t<bits> int_t<bits>::operator++(int) {
+template <size_t bits> constexpr int_t<bits> int_t<bits>::operator++(int) {
     int_t<bits> out = *this;
 
     ++(*this);
@@ -35,7 +35,7 @@ template <size_t bits> int_t<bits> int_t<bits>::operator++(int) {
     return out;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator--() {
+template <size_t bits> constexpr int_t<bits> &int_t<bits>::operator--() {
     IntegralType toAdd = 1;
 
     for (size_t i = 0; i < kComponentsCount; ++i) {
@@ -48,7 +48,7 @@ template <size_t bits> int_t<bits> &int_t<bits>::operator--() {
     return *this;
 }
 
-template <size_t bits> int_t<bits> int_t<bits>::operator--(int) {
+template <size_t bits> constexpr int_t<bits> int_t<bits>::operator--(int) {
     int_t<bits> out = *this;
 
     --(*this);
@@ -56,7 +56,7 @@ template <size_t bits> int_t<bits> int_t<bits>::operator--(int) {
     return out;
 }
 
-template <size_t bits> void int_t<bits>::negate() {
+template <size_t bits> constexpr void int_t<bits>::negate() {
     for (IntegralType &component : _components) {
         component = ~component;
     }
@@ -66,7 +66,7 @@ template <size_t bits> void int_t<bits>::negate() {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator+=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator+=(const int_t<other_bits> &other) {
     IntegralType toAdd = 0;
 
     for (size_t i = 0; i < other.kComponentsCount && i < kComponentsCount;
@@ -81,35 +81,39 @@ int_t<bits> &int_t<bits>::operator+=(const int_t<other_bits> &other) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator-=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator-=(const int_t<other_bits> &other) {
     return (*this) += -other;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator+=(int64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator+=(int64_t other) {
     return (*this) += int_t<bits>(other);
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator-=(int64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator-=(int64_t other) {
     return (*this) += -other;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator+(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator+(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first += second;
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator-(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator-(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first -= second;
 }
 
 template <size_t bits>
-int_t<bits> operator+(int_t<bits> first, int64_t second) {
+constexpr int_t<bits> operator+(int_t<bits> first, int64_t second) {
     return first += second;
 }
 
 template <size_t bits>
-int_t<bits> operator-(int_t<bits> first, int64_t second) {
+constexpr int_t<bits> operator-(int_t<bits> first, int64_t second) {
     return first -= second;
 }
 

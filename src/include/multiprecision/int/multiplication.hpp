@@ -12,7 +12,8 @@
 namespace multiprecision {
 
 template <size_t segments_count>
-void multiplySegments(uint32_t *first, uint32_t *second, uint32_t *result) {
+constexpr void multiplySegments(uint32_t *first, uint32_t *second,
+                                uint32_t *result) {
     // Don't make this static if you don't want to break multithread
     // applications.
     uint64_t noOverflowResult[segments_count + 1];
@@ -53,9 +54,8 @@ void multiplySegments(uint32_t *first, uint32_t *second, uint32_t *result) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator*=(const int_t<other_bits> &other) {
-    static constexpr size_t k32BitComponentsCount =
-        std::min(bits, other_bits) / 32;
+constexpr int_t<bits> &int_t<bits>::operator*=(const int_t<other_bits> &other) {
+    constexpr size_t k32BitComponentsCount = std::min(bits, other_bits) / 32;
 
     multiplySegments<k32BitComponentsCount>((uint32_t *)_components,
                                             (uint32_t *)other._components,
@@ -64,16 +64,19 @@ int_t<bits> &int_t<bits>::operator*=(const int_t<other_bits> &other) {
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator*=(int64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator*=(int64_t other) {
     return *this *= int_t<bits>(other);
 }
 
 template <size_t bits, size_t other_bits>
-int_t<bits> operator*(int_t<bits> first, const int_t<other_bits> &second) {
+constexpr int_t<bits> operator*(int_t<bits> first,
+                                const int_t<other_bits> &second) {
     return first *= second;
 }
 
-template <size_t bits> int_t<bits> operator*(int_t<bits> first, int64_t other) {
+template <size_t bits>
+constexpr int_t<bits> operator*(int_t<bits> first, int64_t other) {
     return first *= other;
 }
 

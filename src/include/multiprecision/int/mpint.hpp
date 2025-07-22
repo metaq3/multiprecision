@@ -7,7 +7,7 @@
 #include <string>
 
 #ifndef DEFAULT_INTEGRAL_TYPE
-#define DEFAULT_INTEGRAL_TYPE uint16_t
+#define DEFAULT_INTEGRAL_TYPE uint64_t
 #endif
 
 namespace multiprecision {
@@ -21,31 +21,31 @@ template <size_t bits> class int_t {
  public:
     using IntegralType = DEFAULT_INTEGRAL_TYPE;
 
-    int_t();
-    int_t(int64_t x);
+    constexpr int_t();
+    constexpr int_t(int64_t x);
 
-    template <size_t other_bits> int_t(const int_t<other_bits> &x);
-
-    template <size_t other_bits>
-    int_t<bits> &operator=(const int_t<other_bits> &other);
-    int_t<bits> &operator=(int64_t other);
-
-    std::string toString() const;
+    template <size_t other_bits> constexpr int_t(const int_t<other_bits> &x);
 
     template <size_t other_bits>
-    int_t<bits> &operator+=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator=(int64_t other);
+
+    constexpr std::string toString() const;
 
     template <size_t other_bits>
-    int_t<bits> &operator-=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator+=(const int_t<other_bits> &other);
 
     template <size_t other_bits>
-    int_t<bits> &operator*=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator-=(const int_t<other_bits> &other);
 
     template <size_t other_bits>
-    int_t<bits> &operator/=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator*=(const int_t<other_bits> &other);
 
     template <size_t other_bits>
-    int_t<bits> &operator%=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator/=(const int_t<other_bits> &other);
+
+    template <size_t other_bits>
+    constexpr int_t<bits> &operator%=(const int_t<other_bits> &other);
 
     /**
      * @brief Provides left bit shifting. Take note that only first 64 bits are
@@ -56,7 +56,7 @@ template <size_t bits> class int_t {
      * @return int_t<bits>&
      */
     template <size_t other_bits>
-    int_t<bits> &operator<<=(const int_t<other_bits> &shift);
+    constexpr int_t<bits> &operator<<=(const int_t<other_bits> &shift);
 
     /**
      * @brief Provides right bit shifting. Take note that only first 64 bits are
@@ -67,60 +67,64 @@ template <size_t bits> class int_t {
      * @return int_t<bits>&
      */
     template <size_t other_bits>
-    int_t<bits> &operator>>=(const int_t<other_bits> &shift);
+    constexpr int_t<bits> &operator>>=(const int_t<other_bits> &shift);
 
-    int_t<bits> &operator+=(int64_t other);
-    int_t<bits> &operator-=(int64_t other);
-    int_t<bits> &operator*=(int64_t other);
-    int_t<bits> &operator/=(int64_t other);
-    int_t<bits> &operator%=(int64_t other);
-    int_t<bits> &operator<<=(uint64_t other);
-    int_t<bits> &operator>>=(uint64_t other);
+    constexpr int_t<bits> &operator+=(int64_t other);
+    constexpr int_t<bits> &operator-=(int64_t other);
+    constexpr int_t<bits> &operator*=(int64_t other);
+    constexpr int_t<bits> &operator/=(int64_t other);
+    constexpr int_t<bits> &operator%=(int64_t other);
+    constexpr int_t<bits> &operator<<=(uint64_t other);
+    constexpr int_t<bits> &operator>>=(uint64_t other);
 
-    int_t<bits> &operator++();
-    int_t<bits> operator++(int);
+    constexpr int_t<bits> &operator++();
+    constexpr int_t<bits> operator++(int);
 
-    int_t<bits> &operator--();
-    int_t<bits> operator--(int);
+    constexpr int_t<bits> &operator--();
+    constexpr int_t<bits> operator--(int);
 
-    int_t<bits> operator-() const;
+    constexpr int_t<bits> operator-() const;
 
-    auto operator<=>(const int_t<bits> &other) const;
-    bool operator==(const int_t<bits> &other) const;
-    bool operator!=(const int_t<bits> &other) const;
+    constexpr auto operator<=>(const int_t<bits> &other) const;
+    constexpr bool operator==(const int_t<bits> &other) const;
+    constexpr bool operator!=(const int_t<bits> &other) const;
 
-    auto operator<=>(int64_t x) const;
-    bool operator==(int64_t x) const;
-    bool operator!=(int64_t x) const;
-
-    template <size_t other_bits>
-    int_t<bits> &operator|=(const int_t<other_bits> &other);
+    constexpr auto operator<=>(int64_t x) const;
+    constexpr bool operator==(int64_t x) const;
+    constexpr bool operator!=(int64_t x) const;
 
     template <size_t other_bits>
-    int_t<bits> &operator&=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator|=(const int_t<other_bits> &other);
 
     template <size_t other_bits>
-    int_t<bits> &operator^=(const int_t<other_bits> &other);
+    constexpr int_t<bits> &operator&=(const int_t<other_bits> &other);
 
-    int_t<bits> &operator|=(uint64_t other);
-    int_t<bits> &operator&=(uint64_t other);
-    int_t<bits> &operator^=(uint64_t other);
+    template <size_t other_bits>
+    constexpr int_t<bits> &operator^=(const int_t<other_bits> &other);
 
-    int_t<bits> operator~() const;
+    constexpr int_t<bits> &operator|=(uint64_t other);
+    constexpr int_t<bits> &operator&=(uint64_t other);
+    constexpr int_t<bits> &operator^=(uint64_t other);
 
-    bool isNegative() const;
+    constexpr int_t<bits> operator~() const;
+
+    constexpr bool isNegative() const;
 
     // Making theese implicit can cause ambigiousity with comparision operators
     explicit operator int64_t() const;
     explicit operator int32_t() const;
     explicit operator int16_t() const;
     explicit operator int8_t() const;
+    explicit operator uint64_t() const;
+    explicit operator uint32_t() const;
+    explicit operator uint16_t() const;
+    explicit operator uint8_t() const;
 
     // I would like to place __int128 conversion here, but MSVC does not have
     // this type. MSVC...
 
  protected:
-    void negate();
+    constexpr void negate();
 
  private:
     static constexpr size_t kComponentSize = sizeof(IntegralType) * 8;
@@ -135,11 +139,11 @@ template <size_t bits> class int_t {
     template <size_t other_bits> friend class int_t;
 };
 
-template <size_t bits> int_t<bits>::int_t() {
+template <size_t bits> constexpr int_t<bits>::int_t() {
     std::fill(_components, _components + kComponentsCount, 0);
 }
 
-template <size_t bits> int_t<bits>::int_t(int64_t x) : int_t() {
+template <size_t bits> constexpr int_t<bits>::int_t(int64_t x) : int_t() {
     if (x < 0) {
         x = -x;
 
@@ -157,7 +161,7 @@ template <size_t bits> int_t<bits>::int_t(int64_t x) : int_t() {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits>::int_t(const int_t<other_bits> &x) {
+constexpr int_t<bits>::int_t(const int_t<other_bits> &x) {
     for (size_t i = 0; i < kComponentsCount && i < x.kComponentsCount; ++i) {
         _components[i] = x._components[i];
     }
@@ -165,7 +169,7 @@ int_t<bits>::int_t(const int_t<other_bits> &x) {
 
 template <size_t bits>
 template <size_t other_bits>
-int_t<bits> &int_t<bits>::operator=(const int_t<other_bits> &other) {
+constexpr int_t<bits> &int_t<bits>::operator=(const int_t<other_bits> &other) {
     for (size_t i = 0; i < kComponentsCount && i < other.kComponentsCount;
          ++i) {
         _components[i] = other._components[i];
@@ -174,7 +178,8 @@ int_t<bits> &int_t<bits>::operator=(const int_t<other_bits> &other) {
     return *this;
 }
 
-template <size_t bits> int_t<bits> &int_t<bits>::operator=(int64_t other) {
+template <size_t bits>
+constexpr int_t<bits> &int_t<bits>::operator=(int64_t other) {
     std::fill(_components, _components + kComponentsCount, 0);
 
     if (other < 0) {
@@ -221,7 +226,35 @@ template <size_t bits> int_t<bits>::operator int8_t() const {
     return *result;
 }
 
-template <size_t bits> int_t<bits> int_t<bits>::operator-() const {
+template <size_t bits> int_t<bits>::operator uint64_t() const {
+    const uint64_t *const result =
+        reinterpret_cast<uint64_t const *>(_components);
+
+    return *result;
+}
+
+template <size_t bits> int_t<bits>::operator uint32_t() const {
+    const uint32_t *const result =
+        reinterpret_cast<uint32_t const *>(_components);
+
+    return *result;
+}
+
+template <size_t bits> int_t<bits>::operator uint16_t() const {
+    const uint16_t *const result =
+        reinterpret_cast<uint16_t const *>(_components);
+
+    return *result;
+}
+
+template <size_t bits> int_t<bits>::operator uint8_t() const {
+    const uint8_t *const result =
+        reinterpret_cast<uint8_t const *>(_components);
+
+    return *result;
+}
+
+template <size_t bits> constexpr int_t<bits> int_t<bits>::operator-() const {
     int_t<bits> result = *this;
 
     result.negate();

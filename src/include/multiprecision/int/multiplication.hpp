@@ -8,12 +8,14 @@
  */
 
 #include "mpint.hpp"
+#include <cstring>
 
 namespace multiprecision {
 
 template <size_t segments_count>
-constexpr void multiplySegments(uint32_t *first, uint32_t *second,
-                                uint32_t *result) {
+constexpr void multiplySegments(uint32_t first[segments_count],
+                                uint32_t const second[segments_count],
+                                uint32_t result[segments_count]) {
     // Don't make this static if you don't want to break multithread
     // applications.
     uint64_t noOverflowResult[segments_count + 1];
@@ -33,12 +35,17 @@ constexpr void multiplySegments(uint32_t *first, uint32_t *second,
 
             // Results are stored here, in last builtin arg.
             noOverflowResult[i + j + 1] += __builtin_add_overflow(
-                uint32_t(segmentMultiplication), noOverflowResult[i + j],
+                segmentMultiplication & 0xffffffff, noOverflowResult[i + j],
                 &noOverflowResult[i + j]);
         }
     }
 
-    const uint32_t *remainder = (uint32_t *)noOverflowResult;
+    // We can't really cast from uint64_t to uint32_t. This is UB and provides
+    // obscure bugs in GCC.
+    uint32_t remainder[segments_count * 2 + 2];
+
+    memcpy(remainder, noOverflowResult,
+           (segments_count + 1) * sizeof(uint64_t));
 
     // Now accurately add overflow to the corresponding segments. Basically,
     // this is a simple addition operation of two large integers.
@@ -49,6 +56,9 @@ constexpr void multiplySegments(uint32_t *first, uint32_t *second,
         result[i] = remainder[i * 2 - 1];
         noOverflowResult[i + 1] +=
             __builtin_add_overflow(remainder[i * 2], result[i], &result[i]);
+
+        memcpy(&remainder[i * 2 + 2], &noOverflowResult[i + 1],
+               sizeof(uint64_t));
     }
 }
 
@@ -57,9 +67,18 @@ template <size_t other_bits>
 constexpr int_t<bits> &int_t<bits>::operator*=(const int_t<other_bits> &other) {
     constexpr size_t k32BitComponentsCount = std::min(bits, other_bits) / 32;
 
-    multiplySegments<k32BitComponentsCount>((uint32_t *)_components,
-                                            (uint32_t *)other._components,
-                                            (uint32_t *)_components);
+    uint32_t components[k32BitComponentsCount];
+    uint32_t otherComponents[k32BitComponentsCount];
+
+    // Safe way to "cast" array types.
+    memcpy(components, _components, k32BitComponentsCount * sizeof(uint32_t));
+    memcpy(otherComponents, other._components,
+           k32BitComponentsCount * sizeof(uint32_t));
+
+    multiplySegments<k32BitComponentsCount>(components, otherComponents,
+                                            components);
+
+    memcpy(_components, components, k32BitComponentsCount * sizeof(uint32_t));
 
     return *this;
 }

@@ -148,7 +148,7 @@ constexpr int_t<bits> &
 int_t<bits>::operator<<=(const int_t<other_bits> &other) {
     // This is not the best way to reduce to shift with uint64_t, but shifting
     // over 18446744073709551616 is senseless either.
-    const uint64_t shift = *reinterpret_cast<uint64_t *>(other._components);
+    const uint64_t shift = static_cast<uint64_t>(other._components);
 
     return *this <<= shift;
 }
@@ -159,7 +159,7 @@ constexpr int_t<bits> &
 int_t<bits>::operator>>=(const int_t<other_bits> &other) {
     // This is not the best way to reduce to shift with uint64_t, but shifting
     // over 18446744073709551616 is senseless either.
-    const uint64_t shift = *reinterpret_cast<uint64_t *>(other._components);
+    const uint64_t shift = static_cast<uint64_t>(other._components);
 
     return *this >>= shift;
 }

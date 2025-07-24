@@ -7,7 +7,7 @@
 #include <string>
 
 #ifndef DEFAULT_INTEGRAL_TYPE
-#define DEFAULT_INTEGRAL_TYPE uint64_t
+#define DEFAULT_INTEGRAL_TYPE uint16_t
 #endif
 
 namespace multiprecision {
@@ -200,58 +200,46 @@ constexpr int_t<bits> &int_t<bits>::operator=(int64_t other) {
 }
 
 template <size_t bits> int_t<bits>::operator int64_t() const {
-    const int64_t *const result =
-        reinterpret_cast<int64_t const *>(_components);
+    int64_t result = 0;
 
-    return *result;
+    std::copy(_components, _components + sizeof(int64_t) / sizeof(IntegralType),
+              reinterpret_cast<IntegralType *>(&result));
+
+    return result;
 }
 
 template <size_t bits> int_t<bits>::operator int32_t() const {
-    const int32_t *const result =
-        reinterpret_cast<int32_t const *>(_components);
-
-    return *result;
+    return static_cast<int32_t>(static_cast<int64_t>(*this));
 }
 
 template <size_t bits> int_t<bits>::operator int16_t() const {
-    const int16_t *const result =
-        reinterpret_cast<int16_t const *>(_components);
-
-    return *result;
+    return static_cast<int16_t>(static_cast<int64_t>(*this));
 }
 
 template <size_t bits> int_t<bits>::operator int8_t() const {
-    const int8_t *const result = reinterpret_cast<int8_t const *>(_components);
-
-    return *result;
+    return static_cast<int8_t>(static_cast<int64_t>(*this));
 }
 
 template <size_t bits> int_t<bits>::operator uint64_t() const {
-    const uint64_t *const result =
-        reinterpret_cast<uint64_t const *>(_components);
+    uint64_t result = 0;
 
-    return *result;
+    std::copy(_components,
+              _components + sizeof(uint64_t) / sizeof(IntegralType),
+              reinterpret_cast<IntegralType *>(&result));
+
+    return result;
 }
 
 template <size_t bits> int_t<bits>::operator uint32_t() const {
-    const uint32_t *const result =
-        reinterpret_cast<uint32_t const *>(_components);
-
-    return *result;
+    return static_cast<uint32_t>(static_cast<uint64_t>(*this));
 }
 
 template <size_t bits> int_t<bits>::operator uint16_t() const {
-    const uint16_t *const result =
-        reinterpret_cast<uint16_t const *>(_components);
-
-    return *result;
+    return static_cast<uint16_t>(static_cast<uint64_t>(*this));
 }
 
 template <size_t bits> int_t<bits>::operator uint8_t() const {
-    const uint8_t *const result =
-        reinterpret_cast<uint8_t const *>(_components);
-
-    return *result;
+    return static_cast<uint8_t>(static_cast<uint64_t>(*this));
 }
 
 template <size_t bits> constexpr int_t<bits> int_t<bits>::operator-() const {

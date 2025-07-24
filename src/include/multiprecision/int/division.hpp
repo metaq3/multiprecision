@@ -39,14 +39,16 @@ constexpr int_t<bits> operator/(const int_t<bits> &first,
     // Let `second` be number, that can be written with as few as N bits.
     // Multiplying this number with any other number X will be no smaller than X
     // << (N - 1) and no bigger than X << N. So, what's the maximum number, that
-    // does not overflow when multiplied by X? It's M >> N, where M is the
-    // maximum number some integer container can hold.
+    // does not overflow when multiplied by `second`? It's M >> N, where M is
+    // the maximum number some integer container can hold.
     while (left != 0) {
         left >>= 1;
         right >>= 1;
     }
 
     ++right;
+
+    int_t<bits> leftSide = left * second;
 
     // Now do binsearch algo.
     while (left < right) {
@@ -57,13 +59,16 @@ constexpr int_t<bits> operator/(const int_t<bits> &first,
         // number int_t<bits> can hold.
         const int_t<bits> result = mid * second;
 
-        if (result == first) {
+        if (leftSide > result || result > first || result < 0) {
+            // Simple overflow checking.
+            right = mid;
+        } else if (result == first) {
             return mid;
-        } else if (result < first) {
+        } else {
             left = mid;
             ++left;
-        } else {
-            right = mid;
+
+            leftSide = left * second;
         }
     }
 

@@ -5,8 +5,8 @@
 #include <multiprecision.hpp>
 
 TEST(Arithmetic, Division) {
-    const std::pair<int64_t, int64_t> pairs[] = {{1ll << 62ll, 1ll << 62ll},
-                                                 {9, -3}};
+    const std::pair<int64_t, int64_t> pairs[] = {
+        {1ll << 62ll, 1ll << 62ll}, {9, -3}, {0x7fffffffffffffff, 10}};
 
     for (auto [first, second] : pairs) {
         const multiprecision::int_t<64> a(first);

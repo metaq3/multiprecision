@@ -35,6 +35,9 @@ TEST(Arithmetic, Addition) {
     std::uniform_int_distribution<int64_t> randomGenerator(-0x0fffffffffffffff,
                                                            0x0fffffffffffffff);
 
+    // For deterministic result
+    mt.seed(38274);
+
     for (size_t i = 0; i < 1000000; ++i) {
         const int64_t first = randomGenerator(mt);
         const int64_t second = randomGenerator(mt);

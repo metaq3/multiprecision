@@ -10,26 +10,58 @@ As primary target, I'll benchmark arithmetic operations: _incrementing, decremen
 
 #### 256-bit integers
 
-| Benchmark | Operations per second | ms per operation |
-| --------- | --------------------- | ---------------- |
-| `++x`     | 1,377,029,793         | 0.00000073       |
-| `--x`     | 1,368,109,397         | 0.00000073       |
-| `a + b`   | 111,209,073           | 0.00000899       |
-| `a * b`   | 51,424,594            | 0.00001945       |
-| `a / b`   | 1,255,010             | 0.00079681       |
+| Bench   | Operations per second | time per operation |
+| ------- | --------------------- | ------------------ |
+| `++x`   | 5,320,235,622         | 0.19 ns            |
+| `--x`   | 2,661,642,904         | 0.38 ns            |
+| `a + b` | 264,272,149           | 3.78 ns            |
+| `a * b` | 98,310,678            | 10.17 ns           |
+| `a / b` | 3,340,166             | 299.39 ns          |
 
 #### 1024-bit integers
 
-| Benchmark | Operations per second | ms per operation |
-| --------- | --------------------- | ---------------- |
-| `a + b`   | 20,408,274            | 0.00004900       |
-| `a * b`   | 3,878,536             | 0.00025783       |
-| `a / b`   | 531,018               | 0.00188317       |
+| Bench   | Operations per second | time per operation |
+| ------- | --------------------- | ------------------ |
+| `a + b` | 196,446,325           | 5.09 ns            |
+| `a * b` | 13,785,549            | 72.54 ns           |
+| `a / b` | 1,592,370             | 627.99 ns          |
 
 #### 16384-bit integers
 
-| Benchmark | Operations per second | ms per operation |
-| --------- | --------------------- | ---------------- |
-| `a + b`   | 1,283,494             | 0.00077912       |
-| `a * b`   | 17,561                | 0.05694164       |
-| `a / b`   | 5,461                 | 0.18308960       |
+| Bench   | Operations per second | time per operation |
+| ------- | --------------------- | ------------------ |
+| `a + b` | 27,156,951            | 36.82 ns           |
+| `a * b` | 705,637               | 1,417.16 ns        |
+| `a / b` | 76,088                | 13,142.61 ns       |
+
+## Comparison with `boost::multiprecision`
+
+Here I compare results of my library with **boost**'s implementation. Keep in mind, that theese bechmarks cover cases, when most of the integer bits are used. In reality, **boost** optimizes calculations when most of the bits are zero, which my library don't use.
+
+### Intel Core i7 7740X 4.3 GHz
+
+#### 256-bit integers
+
+| Bench   | ops/s ( boost ) | ops/s ( multiprecision ) | ns/op ( boost ) | ns/op ( multiprecision ) |
+| ------- | --------------- | ------------------------ | --------------- | ------------------------ |
+| `++x`   | 849,908,460     | 1,052,124,897            | 1.18            | 0.95                     |
+| `--x`   | 899,667,545     | 975,316,019              | 1.13            | 1.03                     |
+| `a + b` | 121,607,707     | 166,078,996              | 8.22            | 6.02                     |
+| `a * b` | 40,907,726      | 41,268,835               | 24.45           | 24.23                    |
+| `a / b` | 7,429,913       | 2,643,523                | 134.59          | 378.28                   |
+
+#### 1024-bit integers
+
+| Bench   | ops/s ( boost ) | ops/s ( multiprecision ) | ns/op ( boost ) | ns/op ( multiprecision ) |
+| ------- | --------------- | ------------------------ | --------------- | ------------------------ |
+| `a + b` | 88,586,729      | 117,690,777              | 11.29           | 8.50                     |
+| `a * b` | 6,537,428       | 10,699,275               | 152.97          | 93.46                    |
+| `a / b` | 1,631,633       | 570,242                  | 612.88          | 1,753                    |
+
+#### 16384-bit integers
+
+| Bench   | ops/s ( boost ) | ops/s ( multiprecision ) | ns/op ( boost ) | ns/op ( multiprecision ) |
+| ------- | --------------- | ------------------------ | --------------- | ------------------------ |
+| `a + b` | 9,835,071       | 10,071,651               | 101.68          | 99.29                    |
+| `a * b` | 33,225          | 582,936                  | 30,097.09       | 1,715.45                 |
+| `a / b` | 42,737          | 68,889                   | 23,398.43       | 14,516.04                |

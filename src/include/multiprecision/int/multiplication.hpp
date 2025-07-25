@@ -27,38 +27,41 @@ constexpr void multiplySegments(uint32_t first[segments_count],
     // carrying among segments, we're multiplying in 64-bit integers, storing
     // overflow in special 64-bit integer array.
     for (size_t i = 0; i < segments_count; ++i) {
+        // If true, skips O(n) operations.
+        if (first[i] == 0)
+            continue;
+
         for (size_t j = 0; i + j < segments_count; ++j) {
             const uint64_t segmentMultiplication =
                 uint64_t(first[i]) * uint64_t(second[j]);
 
             noOverflowResult[i + j + 1] += segmentMultiplication >> 32;
 
-            // Results are stored here, in last builtin arg.
-            noOverflowResult[i + j + 1] += __builtin_add_overflow(
-                segmentMultiplication & 0xffffffff, noOverflowResult[i + j],
-                &noOverflowResult[i + j]);
+            const uint64_t newResult =
+                (segmentMultiplication & 0xffffffff) + noOverflowResult[i + j];
+
+            noOverflowResult[i + j + 1] +=
+                (~newResult & noOverflowResult[i + j]) >> 63;
+
+            noOverflowResult[i + j] = newResult;
         }
     }
-
-    // We can't really cast from uint64_t to uint32_t. This is UB and provides
-    // obscure bugs in GCC.
-    uint32_t remainder[segments_count * 2 + 2];
-
-    memcpy(remainder, noOverflowResult,
-           (segments_count + 1) * sizeof(uint64_t));
 
     // Now accurately add overflow to the corresponding segments. Basically,
     // this is a simple addition operation of two large integers.
 
-    result[0] = remainder[0];
+    result[0] = noOverflowResult[0];
 
     for (size_t i = 1; i < segments_count; ++i) {
-        result[i] = remainder[i * 2 - 1];
-        noOverflowResult[i + 1] +=
-            __builtin_add_overflow(remainder[i * 2], result[i], &result[i]);
+        const uint32_t overflow = noOverflowResult[i];
+        result[i] = noOverflowResult[i - 1] >> 32;
 
-        memcpy(&remainder[i * 2 + 2], &noOverflowResult[i + 1],
-               sizeof(uint64_t));
+        // noOverflowResult[i + 1] is never big enough to overflow here.
+        // There should be 4 billion operations to make this happen. Untill you
+        // don't hold numbers that are 4GB in size and don't have computer with
+        // at least 72GB RAM, this is merely possible.
+        noOverflowResult[i + 1] +=
+            __builtin_add_overflow(overflow, result[i], &result[i]);
     }
 }
 

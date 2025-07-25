@@ -7,7 +7,7 @@
 #include <string>
 
 #ifndef DEFAULT_INTEGRAL_TYPE
-#define DEFAULT_INTEGRAL_TYPE uint16_t
+#define DEFAULT_INTEGRAL_TYPE uint64_t
 #endif
 
 namespace multiprecision {
